@@ -2,7 +2,6 @@
 
 import _ from 'lodash';
 import {expect} from 'chai';
-
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk'
 
@@ -13,9 +12,9 @@ const createStoreWithMiddleware = applyMiddleware(thunk)(createStore);
 const defaultFilter = { whitelist: [], blacklist: [] };
 let store;
 
-describe('Reducer', () => {
+describe('Genres filter reducer', () => {
 
-    describe('resetGenresFilter', () => {
+    describe('on action "resetGenresFilter"', () => {
         beforeEach(() => {
             store = createStoreWithMiddleware(reducer);
         });
@@ -31,7 +30,7 @@ describe('Reducer', () => {
         });
     });
 
-    describe('setFilter', () => {
+    describe('on action "setFilter"', () => {
         beforeEach(() => {
             store = createStoreWithMiddleware(reducer);
         });
@@ -66,5 +65,73 @@ describe('Reducer', () => {
                 expect(store.getState().genresFilter).to.deep.equal(genresFilter);
             });
         })
+    });
+
+    describe('on action "addToGenresWhitelist"', () => {
+        beforeEach(() => {
+            store = createStoreWithMiddleware(reducer);
+        });
+
+        it('should change filter state', () => {
+            const expectedWhitelist = ['sci-fi'];
+
+            store.dispatch(actions.resetGenresFilter());
+
+            expect(store.getState().genresFilter.whitelist).to.be.empty;
+
+            store.dispatch(actions.addToGenresWhitelist('sci-fi'));
+
+            expect(store.getState().genresFilter.whitelist).to.deep.equal(expectedWhitelist);
+        });
+    });
+
+    describe('on action "removeFromGenresWhitelist"', () => {
+        beforeEach(() => {
+            store = createStoreWithMiddleware(reducer);
+        });
+
+        it('should change filter state', () => {
+            store.dispatch(actions.setGenresFilter({ whitelist: [ 'crime' ], blacklist: [] }));
+
+            expect(store.getState().genresFilter.whitelist).to.deep.equal([ 'crime' ]);
+
+            store.dispatch(actions.removeFromGenresWhitelist('crime'));
+
+            expect(store.getState().genresFilter.whitelist).to.be.empty;
+        });
+    });
+
+    describe('on action "addToGenresBlacklist"', () => {
+        beforeEach(() => {
+            store = createStoreWithMiddleware(reducer);
+        });
+
+        it('should change filter state', () => {
+            const expectedBlacklist = ['sci-fi'];
+
+            store.dispatch(actions.resetGenresFilter());
+
+            expect(store.getState().genresFilter.blacklist).to.be.empty;
+
+            store.dispatch(actions.addToGenresBlacklist('sci-fi'));
+
+            expect(store.getState().genresFilter.blacklist).to.deep.equal(expectedBlacklist);
+        });
+    });
+
+    describe('on action "removeFromGenresBlacklist"', () => {
+        beforeEach(() => {
+            store = createStoreWithMiddleware(reducer);
+        });
+
+        it('should change filter state', () => {
+            store.dispatch(actions.setGenresFilter({ whitelist: [], blacklist: [ 'crime' ] }));
+
+            expect(store.getState().genresFilter.blacklist).to.deep.equal([ 'crime' ]);
+
+            store.dispatch(actions.removeFromGenresBlacklist('crime'));
+
+            expect(store.getState().genresFilter.blacklist).to.be.empty;
+        });
     });
 });

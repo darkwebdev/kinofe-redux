@@ -2,14 +2,18 @@ import _ from 'lodash'
 import qs from 'qs'
 import fetch from 'node-fetch'
 
-import { REQUEST_MOVIES, GOT_MOVIES, GOT_ERROR, SET_FILTERS, RESET_FILTERS } from './constants'
+import * as CONST from './constants'
 import { api } from '../config/main'
 
-export const requestMovies = (url) => { console.log('requestMovies'); return { type: REQUEST_MOVIES, url }};
-export const gotMovies = (items) => ({ type: GOT_MOVIES, items });
-export const gotError = (err) => ({ type: GOT_ERROR, err });
-export const setFilters = (filters) => ({ type: SET_FILTERS, filters });
-export const resetFilters = () => ({ type: RESET_FILTERS });
+export const requestMovies = (url) => { console.log('requestMovies'); return { type: CONST.REQUEST_MOVIES, url }};
+export const gotMovies = (items) => ({ type: CONST.GOT_MOVIES, items });
+export const gotError = (err) => ({ type: CONST.GOT_ERROR, err });
+export const setGenresFilter = (filter) => ({ type: CONST.SET_GENRES_FILTER, filter });
+export const resetGenresFilter = () => ({ type: CONST.RESET_GENRES_FILTER });
+export const addToGenresWhitelist = (genre) => ({ type: CONST.ADD_TO_GENRES_WHITELIST, genre });
+export const removeFromGenresWhitelist = (genre) => ({ type: CONST.REMOVE_FROM_GENRES_WHITELIST, genre });
+export const addToGenresBlacklist = (genre) => ({ type: CONST.ADD_TO_GENRES_BLACKLIST, genre });
+export const removeFromGenresBlacklist = (genre) => ({ type: CONST.REMOVE_FROM_GENRES_BLACKLIST, genre });
 
 const appendFilters = (filters) =>
     _.isEmpty(filters) ? '' : ('?' + qs.stringify(filters, { indices: false }));
