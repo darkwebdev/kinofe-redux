@@ -6,24 +6,21 @@ import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 chai.use(sinonChai);
 
-import React from 'react'
 import { createStore, applyMiddleware } from 'redux';
-import { Provider } from 'react-redux'
 import thunk from 'redux-thunk'
-import { shallow } from 'enzyme';
 
-import { api } from '../config/main'
-import reducer from '../src/reducers'
-import * as actions from '../src/actions'
-import topMoviesJson from './data/top-movies';
-import topMoviesState from './data/top-movies-state';
+import { api } from '../../config/main'
+import reducer from '../../src/reducers'
+import * as actions from '../../src/actions'
+import topMoviesJson from './../data/top-movies';
+import topMoviesState from './../data/top-movies-state';
 
 
 const createStoreWithMiddleware = applyMiddleware(thunk)(createStore);
 let store;
 
-describe('Action', () => {
-    describe('"fetchMovies"', () => {
+describe('Movies reducer', () => {
+    describe('on action "fetchMovies"', () => {
         it('should dispatch "requestMovies" with proper url', () => {
             const fakeDispatch = sinon.spy();
             actions.fetchMovies()(fakeDispatch);
@@ -31,8 +28,6 @@ describe('Action', () => {
             const expectedUrl = api.url + '/movies';
             expect(fakeDispatch).to.be.calledWith(actions.requestMovies(expectedUrl));
         });
-    });
-    describe('"fetchMovies"', () => {
         it('should activate preloader', () => {
             store = createStoreWithMiddleware(reducer);
 
@@ -43,7 +38,7 @@ describe('Action', () => {
             expect(store.getState().movies.isFetching).to.be.true;
         });
     });
-    describe('"gotMovies"', () => {
+    describe('on action "gotMovies"', () => {
         beforeEach(() => {
             store = createStoreWithMiddleware(reducer);
         });

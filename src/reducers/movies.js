@@ -1,6 +1,6 @@
 import _ from 'lodash'
 
-import { REQUEST_MOVIES, GOT_MOVIES, GOT_ERROR } from '../constants'
+import * as CONST from '../constants'
 
 const initialMoviesState = {
     isFetching: false,
@@ -11,15 +11,15 @@ const initialMoviesState = {
 export default (state = initialMoviesState, action) => {
 
     const stateUpdates = {
-        [REQUEST_MOVIES]: {
+        [CONST.REQUEST_MOVIES]: {
             isFetching: true
         },
-        [GOT_MOVIES]: {
+        [CONST.GOT_MOVIES]: {
             isFetching: false,
             movies: action.items,
             genres: _.chain(action.items).pluck('genres').flatten().unique().value()
         },
-        [GOT_ERROR]: {
+        [CONST.GOT_ERROR]: {
             isFetching: false
         }
     };
