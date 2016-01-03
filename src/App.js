@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Movies from './comp/Movies';
@@ -18,9 +19,9 @@ export class App extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        console.log('componentWillReceiveProps', nextProps, this.props);
+        console.log('componentWillReceiveProps');
         if (!_.isEqual(nextProps.genresFilter, this.props.genresFilter)) {
-            this.dispatch(this.actions.fetchMovies(this.props.genresFilter));
+            this.dispatch(this.actions.fetchMovies(nextProps.genresFilter));
         }
     }
 
@@ -34,16 +35,11 @@ export class App extends Component {
         };
 
         const showOnlyGenre = (genre) => {
-            this.dispatch(this.actions.resetGenresFilter());
-            this.dispatch(this.actions.addToGenresWhitelist(genre));
+            this.dispatch(this.actions.setGenresFilter({ whitelist: [genre], blacklist: [] }));
         };
 
         const hideGenre = (genre) => {
             this.dispatch(this.actions.addToGenresBlacklist(genre));
-        };
-
-        const unhideGenre = (genre) => {
-            this.dispatch(this.actions.removeFromGenresBlacklist(genre));
         };
 
         return (
@@ -51,8 +47,7 @@ export class App extends Component {
                 <Filters
                     genresFilter={ genresFilter }
                     genres={ this.props.genres }
-                    unhideGenre={ unhideGenre }
-                    hideGenres={ hideGenre }
+                    hideGenre={ hideGenre }
                     showOnlyGenre={ showOnlyGenre }
                     showAllGenres={ showAllGenres }
                 />
