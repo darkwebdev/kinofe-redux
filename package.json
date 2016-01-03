@@ -6,6 +6,7 @@
   "directories": {},
   "scripts": {
     "test": "npm run lint && ./node_modules/.bin/mocha",
+    "test:dev": "./node_modules/.bin/mocha --watch --watch-extensions json",
     "lint": "./node_modules/.bin/eslint src test",
     "build": "./node_modules/.bin/browserify -t babelify -g uglifyify src/index.js -o index.min.js",
     "dev": "./node_modules/.bin/watchify -t babelify src/index.js -o index.min.js"
