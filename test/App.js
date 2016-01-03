@@ -6,17 +6,13 @@ import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 chai.use(sinonChai);
 
-import React from 'react'
-import { createStore, applyMiddleware } from 'redux';
-import thunk from 'redux-thunk'
-import { shallow } from 'enzyme';
+import { Store, shallowApp, shallowUpdate } from './helpers'
 
-import { App, mapStateToProps } from '../src/App'
 import Movies from '../src/comp/Movies'
 import Filters from '../src/comp/Filters'
-import reducer from '../src/reducers'
 import * as actions from '../src/actions'
 
+const defaultFilter = { whitelist: [], blacklist: [] };
 let store;
 let app;
 
@@ -24,7 +20,7 @@ describe('App', () => {
 
     context('on start', () => {
         beforeEach(() => {
-            store = createStoreWithMiddleware(reducer);
+            store = Store();
             sinon.spy(actions, 'fetchMovies');
             app = shallowApp(store);
         });
@@ -44,17 +40,18 @@ describe('App', () => {
 
     context('on "showAllGenres"', () => {
         beforeEach(() => {
-            store = createStoreWithMiddleware(reducer);
+            store = Store();
         });
 
         it('should reset genres filter', () => {
             const genresFilter = { whitelist: ['drama'], blacklist: ['action'] };
-            app = shallowApp(store, { genresFilter });
+            store.dispatch(actions.setGenresFilter(genresFilter));
+            app = shallowApp(store);
 
             expect(app.find(Filters).prop('genresFilter')).to.deep.equal(genresFilter);
 
             store.dispatch(actions.resetGenresFilter());
-            app = shallowApp(store);
+            app = shallowUpdate(app, store);
 
             expect(app.find(Filters).prop('genresFilter')).to.deep.equal(defaultFilter);
         });
@@ -101,7 +98,7 @@ describe('App', () => {
             context('', () => {
                 beforeEach(() => {
                     sinon.spy(actions, 'fetchMovies');
-                    store = createStoreWithMiddleware(reducer);
+                    store = Store();
                     store.dispatch(actions.setGenresFilter(genresFilter));
                     app = shallowApp(store);
                 });
@@ -160,7 +157,7 @@ describe('App', () => {
             context('', () => {
                 beforeEach(() => {
                     sinon.spy(actions, 'fetchMovies');
-                    store = createStoreWithMiddleware(reducer);
+                    store = Store();
                     store.dispatch(actions.setGenresFilter(genresFilter));
                     app = shallowApp(store);
                 });
@@ -186,19 +183,3 @@ describe('App', () => {
         });
     });
 });
-
-const createStoreWithMiddleware = applyMiddleware(thunk)(createStore);
-
-const defaultFilter = { whitelist: [], blacklist: [] };
-
-const shallowApp = (store, props) => {
-    const appProps = props ? props : mapStateToProps(store.getState());
-
-    return shallow(React.createElement(App, Object.assign({ store, actions }, appProps)));
-};
-const shallowUpdate = (comp, store, props) => {
-    const appProps = props ? props : mapStateToProps(store.getState());
-    comp.setProps(Object.assign({ store, actions }, appProps));
-
-    return comp;
-};
